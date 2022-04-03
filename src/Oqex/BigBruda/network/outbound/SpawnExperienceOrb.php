@@ -2,6 +2,8 @@
 
 namespace Oqex\BigBruda\network\outbound;
 
+use pocketmine\network\mcpe\protocol\AddActorPacket;
+
 /**
  * Class SpawnExperienceOrb
  * @package Oqex\BigBruda\network\outbound
@@ -25,5 +27,18 @@ class SpawnExperienceOrb extends OutboundJavaPacket {
         $this->putDouble($this->y);
         $this->putDouble($this->z);
         $this->putShort($this->count);
+    }
+
+    public static function toJava(AddActorPacket $packet, int $xpValue): self
+    {
+        $pk = new self();
+
+        $pk->entityID = $packet->actorRuntimeId;
+        $pk->x = $packet->position->x;
+        $pk->y = $packet->position->y;
+        $pk->z = $packet->position->z;
+        $pk->count = $xpValue; // TODO: This should work?
+
+        return $pk;
     }
 }

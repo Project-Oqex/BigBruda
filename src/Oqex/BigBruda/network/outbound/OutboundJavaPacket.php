@@ -116,6 +116,6 @@ abstract class OutboundJavaPacket extends JavaPacket {
     /*** @throws ErrorException */
     protected final function decode(): void
     {
-        throw new ErrorException(get_class($this) . ' should not use decode()!');
+        throw new ErrorException(get_class($this) . ' should not use decode(), Outbound!');
     }
 }

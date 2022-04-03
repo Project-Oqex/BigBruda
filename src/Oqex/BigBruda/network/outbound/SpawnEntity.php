@@ -3,6 +3,10 @@
 namespace Oqex\BigBruda\network\outbound;
 
 
+use Oqex\BigBruda\network\utils\EntityTypeMap;
+use Oqex\BigBruda\network\utils\JavaUUID;
+use pocketmine\network\mcpe\protocol\AddActorPacket;
+
 /**
  * Class SpawnEntityPacket
  * @package Oqex\BigBruda\network\outbound
@@ -43,5 +47,27 @@ class SpawnEntity extends OutboundJavaPacket {
             $this->putShort((int) round($this->velocityY * 8000));
             $this->putShort((int) round($this->velocityZ * 8000));
         }
+    }
+
+    public static function toJava(AddActorPacket $packet, int $type): self
+    {
+        $pk = new SpawnEntity();
+        $pk->entityID = $packet->actorRuntimeId;
+        $pk->type = $type;
+        $pk->objectUUID = JavaUUID::fromRandom()->toBinary();
+        $pk->x = $packet->position->x;
+        $pk->y = $packet->position->y;
+        $pk->z = $packet->position->z;
+        $pk->yaw = $packet->yaw;
+        $pk->pitch = $packet->pitch;
+        $pk->data = EntityTypeMap::getData($packet, $packet->type);
+        if ($pk->data > 0) {
+            $pk->sendVelocity = true;
+            $pk->velocityX = 0;
+            $pk->velocityY = 0;
+            $pk->velocityZ = 0;
+        }
+
+        return $pk;
     }
 }

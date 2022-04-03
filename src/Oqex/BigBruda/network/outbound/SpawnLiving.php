@@ -2,6 +2,9 @@
 
 namespace Oqex\BigBruda\network\outbound;
 
+use Oqex\BigBruda\network\utils\JavaUUID;
+use pocketmine\network\mcpe\protocol\AddActorPacket;
+
 class SpawnLiving extends OutboundJavaPacket {
     public int $entityID;
     public string $entityUUID;
@@ -36,5 +39,21 @@ class SpawnLiving extends OutboundJavaPacket {
             $this->putShort((int) round($this->velocityY * 8000));
             $this->putShort((int) round($this->velocityZ * 8000));
         }
+    }
+
+    public static function toJava(AddActorPacket $packet, int $type): self
+    {
+        $pk = new self();
+        $pk->entityID = $packet->actorRuntimeId;
+        $pk->type = $type;
+        $pk->entityUUID = JavaUUID::fromRandom()->toBinary();
+        $pk->x = $packet->position->x;
+        $pk->y = $packet->position->y;
+        $pk->z = $packet->position->z;
+        $pk->yaw = $packet->yaw;
+        $pk->pitch = $packet->pitch;
+        $pk->headYaw = $packet->headYaw;
+        // TODO: Velocity?
+        return $pk;
     }
 }
